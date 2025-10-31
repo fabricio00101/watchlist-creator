@@ -1,0 +1,214 @@
+
+:root {
+    /* --- Colores de Marca y Acción --- */
+
+    /* Verde brillante (Botón 'Log', 'Review', acentos) */
+    --color-letterboxd-green: #00E054;
+
+    /* Verde del logo (un tono más oscuro) */
+    --color-letterboxd-logo-green: #00B021;
+
+    /* Naranja/Dorado (Estrellas de rating, membresía Pro) */
+    --color-letterboxd-pro: #E9A520;
+
+    /* Naranja "Like" (Corazón) */
+    --color-letterboxd-like: #FF8000;
+
+    /* Azul para enlaces */
+    --color-letterboxd-link: #40BCF4;
+
+    /* --- Colores Neutrales (Fondos y UI) --- */
+
+    /* Fondo principal oscuro (área de contenido) */
+    --color-bg-content: #445566;
+
+    /* Fondo más oscuro (Header, footer, barras laterales) */
+    --color-bg-ui: #2C3440;
+
+    --color-detail: #ffffff7c;
+
+    /* --- Colores de Texto --- */
+
+    /* Texto principal (blanco brillante) */
+    --color-text-bright: #FFFFFF;
+
+    /* Texto secundario (metadatos, descripciones, labels) */
+    --color-text-muted: #99AABB;
+
+
+
+}
+
+*{
+    margin: 0;
+}
+
+body {
+    background-color: var(--color-bg-content);
+    color: var(--color-text-bright);
+    font-family: "Inter";
+}
+header{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-bg-ui);
+    gap: 0.5em
+
+}
+header img{
+    width: 3em;
+}
+main{
+    padding: 2em;
+}
+
+.container{
+    padding: 1em;
+    text-align: center;
+}
+.section-principal{
+    display: inline-block;
+    border: none;
+    box-shadow: 0px 0px 3px var(--color-detail);
+    padding: 2em;
+    margin-bottom: 2em;
+
+
+}
+.section-principal button, input{
+    font-size: 1em;
+    padding: 0.5em;
+}
+
+.section-principal input{
+    border-color: var(--color-letterboxd-green);
+    background-color: var(--color-bg-content);
+    border-bottom: none;
+    color: var(--color-text-bright);
+
+}
+#search-form{
+    margin-bottom: 2em;
+}
+.buscar-btn, .crear-lista-btn{
+    border-radius: 1em;
+    background-color: var(--color-letterboxd-green);
+    color: var(--color-text-bright);
+    font-weight: bold;
+    transition: opacity 0.5s ease;
+}
+.crear-lista-btn:hover{
+    opacity: 0.8;
+}
+.buscar-btn:hover{
+    opacity: 0.8;
+}
+#content hr {
+    
+    margin-top: 3em;    
+    margin-bottom: 3em; 
+
+    
+    border: none; 
+    height: 1px;  
+    background-color: var(--color-text-muted);
+    opacity: 0.3; 
+}
+.movie-card{
+    flex-basis: 250px;
+    flex-grow: 1;
+    background-color: var(--color-bg-ui);
+    border: 1px solid #ffffff1a;
+    border-radius: 0.5em;
+    overflow: hidden;
+    padding: 1em;
+    text-align: center;
+    transition: transform 0.2s ease;
+}
+
+.movie-card:hover{
+    transform: scale(1.03);
+}
+.movie-card img{
+    max-width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 0.25em;
+    margin-bottom: 0.8em;
+}
+.movie-card h4{
+    color: var(--color-text-bright);
+    font-size: 1.1em;
+    margin: 0.5em 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 1.2em;
+}
+
+.add-to-list-btn{
+    appearance: none;
+    background-color:var(--color-letterboxd-like);
+    border: none;
+    border-radius: 1em;
+    padding: 0.4em;
+    text-align: center;
+    color: var(--color-text-bright);
+    font-weight: bold;
+    margin-top: 0.5em;
+    transition: opacity 0.2s ease;
+}
+.add-to-list-btn:hover{
+    opacity: 0.8;
+}
+
+
+
+#content h2{
+    margin-bottom: 1em;
+}
+.grid{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+}
+
+.watchlist{
+    border: 1px solid var(--color-bg-ui);
+    border-radius: 1em;
+    padding: 1.5em;
+    margin-bottom: 1.5em;
+    width: 100%;
+    box-sizing: border-box;
+}
+.watchlist h3{
+    margin-top: 0;
+    color:  var(--color-letterboxd-green);
+}
+
+.watchlist-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1em;
+}
+
+.watchlist-header h3{
+    margin: 0;
+}
+
+.delete-btn{
+    background-color: var(--color-letterboxd-like);
+    color: var(--color-text-bright);
+    border: none;
+    border-radius: 0.5em;
+    padding: 0.5em 0.8em;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.delete-btn:hover{
+    opacity: 0.8;
+}
+
