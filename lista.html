@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Watchlist Creator - Mis Listas</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#00e054",
+                        "accent-warn": "#ff8000",
+                        "background-light": "#f5f8f6",
+                        "background-dark": "#14181c",
+                        "panel": "#2c3440",
+                        "card-hover": "#445566"
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #14181c;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #14181c;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #2c3440;
+            border-radius: 4px;
+        }
+
+        .line-clamp-1 {
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Grid base for mis listas rendering */
+        #mis-listas-grid:not(:empty) {
+            display: grid;
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            #mis-listas-grid:not(:empty) {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (min-width: 1024px) {
+            #mis-listas-grid:not(:empty) {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        /* Grid base for movies */
+        #list-movies-grid:not(:empty),
+        #list-search-results:not(:empty) {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 640px) {
+
+            #list-movies-grid:not(:empty),
+            #list-search-results:not(:empty) {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        @media (min-width: 768px) {
+
+            #list-movies-grid:not(:empty),
+            #list-search-results:not(:empty) {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+        }
+
+        @media (min-width: 1024px) {
+
+            #list-movies-grid:not(:empty),
+            #list-search-results:not(:empty) {
+                grid-template-columns: repeat(6, minmax(0, 1fr));
+            }
+        }
+
+        article.movie-card {
+            position: relative;
+            aspect-ratio: 2/3;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            background-color: #2c3440;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        article.movie-card:hover {
+            box-shadow: inset 0 0 0 1px rgba(0, 224, 84, 0.5);
+        }
+
+        article.movie-card img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        article.movie-card:hover img {
+            transform: scale(1.05);
+        }
+
+        article.movie-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(20, 24, 28, 0.95) 0%, rgba(20, 24, 28, 0.4) 40%, transparent 100%);
+            pointer-events: none;
+        }
+
+        article.movie-card h4 {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            right: 1rem;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.25;
+            z-index: 10;
+            transition: bottom 0.3s;
+        }
+
+        article.movie-card:has(button.add-to-list-instant-btn) h4 {
+            bottom: 3.5rem;
+            /* Make room for the button */
+        }
+
+        /* Instant add button */
+        article.movie-card button.add-to-list-instant-btn {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            right: 1rem;
+            width: calc(100% - 2rem);
+            padding: 0.5rem;
+            background-color: rgba(0, 224, 84, 0.2);
+            border: 1px solid rgba(0, 224, 84, 0.3);
+            color: #00e054;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 900;
+            backdrop-filter: blur(4px);
+            transition: all 0.3s;
+            opacity: 0;
+            transform: translateY(0.5rem);
+            z-index: 11;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        article.movie-card:hover button.add-to-list-instant-btn {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body class="bg-background-dark text-slate-100 min-h-screen custom-scrollbar flex flex-col">
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-50 w-full border-b border-white/10 bg-background-dark/80 backdrop-blur-md">
+        <div class="mx-auto flex max-w-[1200px] items-center justify-between px-6 py-4">
+            <div class="flex items-center gap-8 flex-1">
+                <a href="index.html" class="flex items-center gap-3 text-primary hover:opacity-80 transition-opacity">
+                    <span class="material-symbols-outlined text-3xl font-bold">movie_filter</span>
+                    <h1 class="text-xl font-black uppercase tracking-tighter text-slate-100 hidden sm:block">Watchlist
+                        Creator</h1>
+                </a>
+
+                <form id="search-form" class="hidden md:flex flex-1 max-w-sm relative group">
+                    <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                        <span
+                            class="material-symbols-outlined text-slate-400 group-focus-within:text-primary transition-colors text-xl">search</span>
+                    </div>
+                    <input id="search-input" name="query"
+                        class="w-full h-10 pl-12 pr-4 bg-panel border-transparent focus:border-primary/50 focus:ring-0 rounded-lg text-slate-100 placeholder:text-slate-500 transition-all duration-300 text-sm shadow-sm"
+                        placeholder="Search your collections..." type="text" />
+                    <button type="submit" class="hidden">Search</button>
+                </form>
+            </div>
+
+            <div class="flex items-center justify-end gap-6 flex-1">
+                <nav class="hidden lg:flex items-center gap-8">
+                    <a href="index.html"
+                        class="text-slate-400 hover:text-primary text-sm font-semibold transition-colors">Dashboard</a>
+                    <a href="lista.html"
+                        class="text-primary text-sm font-semibold transition-colors border-b-2 border-primary pb-1">My
+                        Lists</a>
+                    <a href="index.html#search-section"
+                        class="text-slate-400 hover:text-primary text-sm font-semibold transition-colors">Discover</a>
+                    <a href="#"
+                        class="text-slate-400 hover:text-primary text-sm font-semibold transition-colors">Community</a>
+                </nav>
+                <div class="flex items-center gap-4 border-l border-white/10 pl-6">
+                    <button onclick="alert('Notificaciones en desarrollo')"
+                        class="flex h-10 w-10 items-center justify-center rounded-lg hover:bg-panel text-slate-100 transition-colors">
+                        <span class="material-symbols-outlined">notifications</span>
+                    </button>
+                    <div onclick="alert('Perfil en desarrollo')"
+                        class="h-10 w-10 rounded-full bg-panel border-2 border-primary/20 overflow-hidden cursor-pointer"
+                        title="User Profile"
+                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuByjAdtCvvaO5hr4x_gOuqUGJMaHfEsqle8aFfDt2hocKVVPI9iX_RmEiKtX8HNPCELtNYZQcNNGe12q_v43aZmqlXvqY_sqlccuN85CilfWRapLvfEiAaVrnyDoDzjQdnOcFRAbcQo9SoMiD8K5SB0-9F3gcTwxSNb7J8AjLBrLslN0qPOpZVfAOFkLGO5SoA9P2EDr5hQxKyj-ajR2N0ZowE2QsdgWNKsnJZbpZ7et5ORdmoincvnmvHbnCS-sD3N3AaDeUp7pXPZ');">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="mx-auto max-w-[1200px] px-6 py-10 w-full flex-1">
+        <!-- VISTA: TODAS LAS LISTAS -->
+        <div id="all-lists-view">
+            <div class="flex flex-wrap justify-between items-end gap-4 mb-10">
+                <div class="flex flex-col gap-2">
+                    <h1 class="text-slate-100 text-4xl font-black leading-tight tracking-tighter">My Lists</h1>
+                    <p class="text-slate-400 text-lg font-medium">Manage your custom film bookshelves and curated
+                        collections</p>
+                </div>
+
+                <form id="new-list-form" class="flex items-center gap-2">
+                    <input id="new-list-input" type="text" name="listName" placeholder="New list name..."
+                        class="h-12 w-48 px-4 bg-panel border-transparent focus:border-primary/50 focus:ring-0 rounded-lg text-slate-100 placeholder:text-slate-500 transition-all text-sm"
+                        required>
+                    <button type="submit"
+                        class="flex items-center justify-center gap-2 overflow-hidden rounded-lg h-12 px-6 bg-primary hover:bg-primary/90 text-background-dark text-sm font-bold transition-all shadow-lg shadow-primary/10">
+                        <span class="material-symbols-outlined">add_circle</span>
+                        <span class="hidden sm:inline">Create New List</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Grid for List Cards -->
+            <div id="mis-listas-grid" class="mb-20 min-h-[250px]">
+            </div>
+
+            <!-- Table for Recent Activity -->
+            <div class="mt-20">
+                <h2 class="text-slate-100 text-2xl font-bold leading-tight tracking-tight mb-6">Recent Activity</h2>
+                <div class="overflow-x-auto rounded-xl border border-white/10 bg-panel">
+                    <table class="w-full text-left whitespace-nowrap min-w-max">
+                        <thead>
+                            <tr class="bg-background-dark/30 border-b border-white/5">
+                                <th class="px-6 py-4 text-slate-300 text-xs font-bold uppercase tracking-wider">List
+                                    Name
+                                </th>
+                                <th
+                                    class="px-6 py-4 text-slate-300 text-xs font-bold uppercase tracking-wider text-center">
+                                    Items</th>
+                                <th
+                                    class="px-6 py-4 text-slate-300 text-xs font-bold uppercase tracking-wider text-center">
+                                    Visibility</th>
+                                <th
+                                    class="px-6 py-4 text-slate-300 text-xs font-bold uppercase tracking-wider text-right">
+                                    Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recent-activity-table" class="divide-y divide-white/5">
+                            <!-- Dynamic rows injected by app.js -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- VISTA: LISTA INDIVIDUAL -->
+        <div id="single-list-view" class="hidden">
+            <div class="mb-4">
+                <a href="lista.html"
+                    class="text-primary hover:text-primary/80 flex items-center gap-2 text-sm font-bold w-max transition-colors">
+                    <span class="material-symbols-outlined text-sm">arrow_back</span>
+                    <span>Back to My Lists</span>
+                </a>
+            </div>
+
+            <div
+                class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12 border-b border-white/10 pb-8">
+                <div class="flex flex-col gap-2">
+                    <h1 id="lista-titulo" class="text-slate-100 text-4xl font-black leading-tight tracking-tighter">
+                        Cargando
+                        Lista...</h1>
+                    <p id="lista-meta" class="text-slate-400 text-lg font-medium">0 películas guardadas</p>
+                </div>
+
+                <div class="flex w-full md:w-auto gap-4">
+                    <!-- Search Component inside list -->
+                    <form id="list-search-form" class="relative group w-full md:w-80">
+                        <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                            <span
+                                class="material-symbols-outlined text-slate-400 group-focus-within:text-primary transition-colors text-xl">search</span>
+                        </div>
+                        <input id="list-search-input"
+                            class="w-full h-12 pl-12 pr-4 bg-panel border-transparent focus:border-primary/50 focus:ring-0 rounded-xl text-slate-100 placeholder:text-slate-500 transition-all duration-300 shadow-sm"
+                            placeholder="Añadir nueva película..." type="text" required />
+                        <button type="submit" class="hidden">Buscar</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Search Results specifically inside this list to add items -->
+            <div id="list-search-section" class="mb-12 hidden">
+                <h2 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">manage_search</span>
+                    <span>Resultados de Búsqueda</span>
+                </h2>
+                <div id="list-search-results" class="min-h-[150px]">
+                    <!-- Movie cards populated here -->
+                </div>
+                <div class="mt-8 flex justify-end">
+                    <button type="button" id="close-search-btn"
+                        class="px-6 py-2 bg-panel hover:bg-slate-700 text-white rounded-lg font-bold text-sm transition-colors">Volver
+                        a la lista</button>
+                </div>
+                <div class="my-10 h-px bg-white/10 w-full"></div>
+            </div>
+
+            <!-- Grid for Movies currently in the list -->
+            <div>
+                <h2 class="text-xl font-bold text-white mb-6">Contenido de la lista</h2>
+                <div id="list-movies-grid" class="min-h-[250px] mb-20">
+                    <!-- Injected via app.js -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-background-dark border-t border-white/5 py-10 mt-auto">
+        <div class="mx-auto max-w-[1200px] px-6 flex flex-col md:flex-row justify-between items-center gap-8">
+            <div class="flex items-center gap-3 text-slate-400">
+                <span class="material-symbols-outlined">movie_filter</span>
+                <span class="font-bold tracking-tight">Watchlist Creator</span>
+                <span class="text-slate-600 text-sm ml-2">© 2024</span>
+            </div>
+            <div class="flex gap-8 text-sm font-medium text-slate-500">
+                <a class="hover:text-primary transition-colors" href="#">Terms of Service</a>
+                <a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+                <a class="hover:text-primary transition-colors" href="#">Help Center</a>
+                <a class="hover:text-primary transition-colors" href="#">API</a>
+            </div>
+            <div class="flex gap-4">
+                <button
+                    class="w-8 h-8 flex items-center justify-center rounded-full bg-panel text-slate-400 hover:text-primary transition-colors">
+                    <span class="material-symbols-outlined text-sm">share</span>
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- App Logic -->
+    <script src="app.js"></script>
+</body>
+
+</html>
